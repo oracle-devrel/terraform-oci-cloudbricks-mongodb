@@ -30,132 +30,122 @@ variable "private_key_path" {
 /********** Brick Variables **********/
 
 variable "base_compute_image_ocid" {
-
+  description = "Defines the OCID for the OS image to be used on artifact creation. Extract OCID from: https://docs.cloud.oracle.com/iaas/images/ or designated custom image OCID created by packer"
 }
 
 variable "config_server_name" {
-  description = "The name given to the master instance"
+  description = "The name given to the config server instances"
 }
 
 variable "config_server_ad_list" {
-  description = "The availability domain to provision the master instance in"
+  description = "The availability domains to provision the config server instances in"
 }
 
 variable "config_server_fd_list" {
-  description = "The fault domain to provision the master instance in"
+  description = "The fault domains to provision the config server instances in"
 }
 
 variable "config_server_shape" {
-  description = "The shape for the master instance to use"
+  description = "The shape for the config server instances to use"
 }
 
 variable "config_server_count" {
-
+  description = "The number of config server instances to provision"
 }
 
 variable "config_server_is_flex_shape" {
-  description = "Boolean to determine if the master instance is flex or not"
+  description = "Boolean to determine if the config server instances are flex or not"
   default     = false
   type        = bool
 }
 
 variable "config_server_ocpus" {
-  description = "The number of OCPUS for the master instance to use when flex shape is enabled"
+  description = "The number of OCPUS for the config server instances to use when flex shape is enabled"
   default     = ""
 }
 
 variable "config_server_memory_in_gb" {
-  description = "The amount of memory in GB for the master instance to use when flex shape is enabled"
+  description = "The amount of memory in GB for the config server instances to use when flex shape is enabled"
   default     = ""
 }
 
 
 variable "query_server_name" {
-  description = "The name given to the standby2 instance"
+  description = "The name given to the query server instances instance"
 }
 
 variable "query_server_count" {
-  description = "Number of MongoDB query servers to provision"
+  description = "The number of query server instances to provision"
 }
 
 
 variable "query_server_ad_list" {
-  description = "The availability domain to provision the hoststandby2 instance in"
+  description = "The availability domains to provision the query server instances in"
 }
 
 variable "query_server_fd_list" {
-  description = "The fault domain to provision the hoststandby2 instance in"
+  description = "The fault domains to provision the query server instances in"
 }
 
 variable "query_server_shape" {
-  description = "The shape for the hotstandby instances to use"
+  description = "The shape for the query server instances to use"
 }
 
 variable "query_server_is_flex_shape" {
-  description = "Boolean to determine if the standy instances are flex or not"
+  description = "Boolean to determine if the query server instances are flex or not"
   default     = false
   type        = bool
 }
 
 variable "query_server_ocpus" {
-  description = "The number of OCPUS for the flex instances to use when flex shape is enabled"
+  description = "The number of OCPUS for the query server instances to use when flex shape is enabled"
   default     = ""
 }
 
 variable "query_server_memory_in_gb" {
-  description = "The amount of memory in GB for the standby instances to use when flex shape is enabled"
+  description = "The amount of memory in GB for the query server instances to use when flex shape is enabled"
   default     = ""
 }
 
 variable "shard_replica_set_name" {
-  description = "The name given to the standby2 instance"
+  description = "The name given to the shard server instances"
 }
 
 variable "shard_replica_set_count" {
-  description = "Number of MongoDB query servers to provision"
+  description = "The number of shard server instances to provision"
 }
 
 
 variable "shard_replica_set_ad_list" {
-  description = "The availability domain to provision the hoststandby2 instance in"
+  description = "The availability domains to provision the shard server instances in"
 }
 
 variable "shard_replica_set_fd_list" {
-  description = "The fault domain to provision the hoststandby2 instance in"
+  description = "The fault domains to provision the shard server instances in"
 }
 
 variable "shard_replica_set_shape" {
-  description = "The shape for the hotstandby instances to use"
+  description = "The shape for the shard server instances to use"
 }
 
 variable "shard_replica_set_is_flex_shape" {
-  description = "Boolean to determine if the standy instances are flex or not"
+  description = "Boolean to determine if the shard server instances are flex or not"
   default     = false
   type        = bool
 }
 
 variable "shard_replica_set_ocpus" {
-  description = "The number of OCPUS for the flex instances to use when flex shape is enabled"
+  description = "The number of OCPUS for the shard server instances to use when flex shape is enabled"
   default     = ""
 }
 
 variable "shard_replica_set_memory_in_gb" {
-  description = "The amount of memory in GB for the standby instances to use when flex shape is enabled"
+  description = "The amount of memory in GB for the shard server instances to use when flex shape is enabled"
   default     = ""
 }
 
-variable "instance_os" {
-  description = "Operating system for compute instances"
-  default     = "Oracle Linux"
-}
-
-variable "linux_os_version" {
-  description = "Operating system version for all Linux instances"
-  default     = "7.9"
-}
-
 variable "mongodb_version" {
-  description = "The version of PostgreSQL used in the setup"
+  description = "The version of MongoDB used in the setup"
 }
 
 variable "ssh_public_key" {
@@ -183,44 +173,44 @@ variable "private_network_subnet_name" {
 }
 
 variable "compute_nsg_name" {
-  description = "Name of the NSG associated to the compute"
+  description = "Name of the NSG associated to the computes"
   default     = ""
 }
 
 variable "config_disk_size_in_gb" {
-
+  description = "The size of the attached disk to the config server instances, stores logging data"
 }
 
 variable "config_disk_vpus_per_gb" {
-
+  description = "The VPUS of the attached disk to the config server instances"
 }
 
 variable "query_disk_size_in_gb" {
-
+  description = "The size of the attached disk to the query server instances, stores logging data"
 }
 
 variable "query_disk_vpus_per_gb" {
-
+  description = "The VPUS of the attached disk to the query server instances"
 }
 
 variable "database_size_in_gb" {
-  description = "Disk Capacity for Database"
+  description = "The size of the attached disk to the shard server instances, stores database data"
 }
 
 variable "database_vpus_per_gb" {
-  description = "Disk VPUS for the Database"
+  description = "The VPUS of the attached disk to the shard server instances"
 }
 
 variable "instance_backup_policy_level" {
-
+  description = "The backup policy of all instances boot volumes"
 }
 
 variable "config_backup_policy_level" {
-
+  description = "The backup policy of config server ISCSI disks"
 }
 
 variable "query_backup_policy_level" {
-
+  description = "The backup policy of query server ISCSI disks"
 }
 
 variable "database_backup_policy_level" {
