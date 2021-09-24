@@ -30,72 +30,45 @@ variable "private_key_path" {
 /********** Brick Variables **********/
 
 variable "base_compute_image_ocid" {
-  
+
 }
 
-variable "config_primary_name" {
+variable "config_server_name" {
   description = "The name given to the master instance"
 }
 
-variable "config_primary_ad" {
+variable "config_server_ad_list" {
   description = "The availability domain to provision the master instance in"
 }
 
-variable "config_primary_fd" {
+variable "config_server_fd_list" {
   description = "The fault domain to provision the master instance in"
 }
 
-variable "config_primary_shape" {
+variable "config_server_shape" {
   description = "The shape for the master instance to use"
 }
 
-variable "config_primary_is_flex_shape" {
+variable "config_server_count" {
+
+}
+
+variable "config_server_is_flex_shape" {
   description = "Boolean to determine if the master instance is flex or not"
   default     = false
   type        = bool
 }
 
-variable "config_primary_ocpus" {
+variable "config_server_ocpus" {
   description = "The number of OCPUS for the master instance to use when flex shape is enabled"
   default     = ""
 }
 
-variable "config_primary_memory_in_gb" {
+variable "config_server_memory_in_gb" {
   description = "The amount of memory in GB for the master instance to use when flex shape is enabled"
   default     = ""
 }
 
-variable "config_secondary_name" {
-  description = "The name given to the master instance"
-}
-
-variable "config_secondary_ad" {
-  description = "The availability domain to provision the master instance in"
-}
-
-variable "config_secondary_fd" {
-  description = "The fault domain to provision the master instance in"
-}
-
-variable "config_secondary_shape" {
-  description = "The shape for the hotstandby instances to use"
-}
-
-variable "config_secondary_is_flex_shape" {
-  description = "Boolean to determine if the standy instances are flex or not"
-  default     = false
-  type        = bool
-}
-
-variable "config_secondary_ocpus" {
-  description = "The number of OCPUS for the flex instances to use when flex shape is enabled"
-  default     = ""
-}
-
-variable "config_secondary_memory_in_gb" {
-  description = "The amount of memory in GB for the standby instances to use when flex shape is enabled"
-  default     = ""
-}
 
 variable "query_server_name" {
   description = "The name given to the standby2 instance"
@@ -215,19 +188,19 @@ variable "compute_nsg_name" {
 }
 
 variable "config_disk_size_in_gb" {
-  
+
 }
 
 variable "config_disk_vpus_per_gb" {
-  
+
 }
 
 variable "query_disk_size_in_gb" {
-  
+
 }
 
 variable "query_disk_vpus_per_gb" {
-  
+
 }
 
 variable "database_size_in_gb" {
@@ -239,21 +212,19 @@ variable "database_vpus_per_gb" {
 }
 
 variable "instance_backup_policy_level" {
-  
+
 }
 
 variable "config_backup_policy_level" {
-  
+
 }
 
 variable "query_backup_policy_level" {
-  
+
 }
 
 variable "database_backup_policy_level" {
   description = "Backup policy level for Database ISCSI disks"
 }
-
-
 
 /********** Brick Variables **********/

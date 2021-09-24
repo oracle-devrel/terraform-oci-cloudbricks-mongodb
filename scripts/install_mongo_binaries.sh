@@ -14,12 +14,6 @@ EOF
 
 sudo yum -y install mongodb-org
 
-# Should be moved elsewhere once ports are understood 
-sudo systemctl stop firewalld
-sudo systemctl disable firewalld
-
-# sudo -u root bash -c "firewall-cmd --permanent --zone=trusted --add-source=/32"
-# sudo -u root bash -c "firewall-cmd --permanent --zone=trusted --add-port=27017/tcp"
-# sudo -u root bash -c "firewall-cmd --permanent --zone=trusted --add-port=27019/tcp"
-# sudo -u root bash -c "firewall-cmd --reload"
-
+sudo -u root bash -c "firewall-cmd --permanent --zone=public --add-port=27017/tcp"
+sudo -u root bash -c "firewall-cmd --permanent --zone=public --add-port=27019/tcp"
+sudo -u root bash -c "firewall-cmd --reload"

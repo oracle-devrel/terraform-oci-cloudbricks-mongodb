@@ -8,56 +8,35 @@
 #           https://registry.terraform.io/providers/hashicorp/oci/latest/docs/resources/core_volume_backup_policy_assignment
 
 # Create Disk
-resource "oci_core_volume" "ISCSIDisk_config_primary" {
-  availability_domain = var.config_primary_ad
+resource "oci_core_volume" "ISCSIDisk_config_server" {
+  count               = var.config_server_count
+  availability_domain = var.config_server_ad_list[count.index % length(var.config_server_ad_list)]
   compartment_id      = local.compartment_id
-  display_name        = "${oci_core_instance.config_primary.display_name}_disk"
+  display_name        = "${oci_core_instance.config_server[count.index].display_name}_disk"
   size_in_gbs         = var.config_disk_size_in_gb
   vpus_per_gb         = var.config_disk_vpus_per_gb
 }
 
 # Create Disk Attachment
-resource "oci_core_volume_attachment" "ISCSIDiskAttachment_config_primary" {
-  depends_on      = [oci_core_volume.ISCSIDisk_config_primary]
+resource "oci_core_volume_attachment" "ISCSIDiskAttachment_config_server" {
+  count           = var.config_server_count
+  depends_on      = [oci_core_volume.ISCSIDisk_config_server]
   attachment_type = "iscsi"
-  instance_id     = oci_core_instance.config_primary.id
-  volume_id       = oci_core_volume.ISCSIDisk_config_primary.id
+  instance_id     = oci_core_instance.config_server[count.index].id
+  volume_id       = oci_core_volume.ISCSIDisk_config_server[count.index].id
 }
 
 # Assignment of backup policy for ProdDisk
-resource "oci_core_volume_backup_policy_assignment" "backup_policy_assignment_ISCSI_Disk_config_primary" {
-  asset_id  = oci_core_volume.ISCSIDisk_config_primary.id
-  policy_id = local.config_backup_policy_id
-}
-
-
-# Create Disk
-resource "oci_core_volume" "ISCSIDisk_config_secondary" {
-  availability_domain = var.config_secondary_ad
-  compartment_id      = local.compartment_id
-  display_name        = "${oci_core_instance.config_secondary.display_name}_disk"
-  size_in_gbs         = var.config_disk_size_in_gb
-  vpus_per_gb         = var.config_disk_vpus_per_gb
-}
-
-# Create Disk Attachment
-resource "oci_core_volume_attachment" "ISCSIDiskAttachment_config_secondary" {
-  depends_on      = [oci_core_volume.ISCSIDisk_config_secondary]
-  attachment_type = "iscsi"
-  instance_id     = oci_core_instance.config_secondary.id
-  volume_id       = oci_core_volume.ISCSIDisk_config_secondary.id
-}
-
-# Assignment of backup policy for ProdDisk
-resource "oci_core_volume_backup_policy_assignment" "backup_policy_assignment_ISCSI_Disk_config_secondary" {
-  asset_id  = oci_core_volume.ISCSIDisk_config_secondary.id
+resource "oci_core_volume_backup_policy_assignment" "backup_policy_assignment_ISCSI_Disk_config_server" {
+  count     = var.config_server_count
+  asset_id  = oci_core_volume.ISCSIDisk_config_server[count.index].id
   policy_id = local.config_backup_policy_id
 }
 
 
 # Create Disk
 resource "oci_core_volume" "ISCSIDisk_query_server" {
-  count = var.query_server_count
+  count               = var.query_server_count
   availability_domain = var.query_server_ad_list[count.index % length(var.query_server_ad_list)]
   compartment_id      = local.compartment_id
   display_name        = "${oci_core_instance.query_server[count.index].display_name}_disk"
@@ -67,7 +46,7 @@ resource "oci_core_volume" "ISCSIDisk_query_server" {
 
 # Create Disk Attachment
 resource "oci_core_volume_attachment" "ISCSIDiskAttachment_query_server" {
-  count = var.query_server_count
+  count           = var.query_server_count
   depends_on      = [oci_core_volume.ISCSIDisk_query_server]
   attachment_type = "iscsi"
   instance_id     = oci_core_instance.query_server[count.index].id
@@ -76,7 +55,7 @@ resource "oci_core_volume_attachment" "ISCSIDiskAttachment_query_server" {
 
 # Assignment of backup policy for ProdDisk
 resource "oci_core_volume_backup_policy_assignment" "backup_policy_assignment_ISCSI_Disk_query_server" {
-  count = var.query_server_count
+  count     = var.query_server_count
   asset_id  = oci_core_volume.ISCSIDisk_query_server[count.index].id
   policy_id = local.query_backup_policy_id
 }
@@ -84,7 +63,7 @@ resource "oci_core_volume_backup_policy_assignment" "backup_policy_assignment_IS
 
 # Create Disk
 resource "oci_core_volume" "ISCSIDisk_shard_replica_set" {
-  count = var.shard_replica_set_count
+  count               = var.shard_replica_set_count
   availability_domain = var.shard_replica_set_ad_list[count.index % length(var.shard_replica_set_ad_list)]
   compartment_id      = local.compartment_id
   display_name        = "${oci_core_instance.shard_replica_set[count.index].display_name}_disk"
@@ -94,7 +73,7 @@ resource "oci_core_volume" "ISCSIDisk_shard_replica_set" {
 
 # Create Disk Attachment
 resource "oci_core_volume_attachment" "ISCSIDiskAttachment_shard_replica_set" {
-  count = var.shard_replica_set_count
+  count           = var.shard_replica_set_count
   depends_on      = [oci_core_volume.ISCSIDisk_shard_replica_set]
   attachment_type = "iscsi"
   instance_id     = oci_core_instance.shard_replica_set[count.index].id
@@ -103,7 +82,7 @@ resource "oci_core_volume_attachment" "ISCSIDiskAttachment_shard_replica_set" {
 
 # Assignment of backup policy for ProdDisk
 resource "oci_core_volume_backup_policy_assignment" "backup_policy_assignment_ISCSI_Disk_shard_replica_set" {
-  count = var.shard_replica_set_count
+  count     = var.shard_replica_set_count
   asset_id  = oci_core_volume.ISCSIDisk_shard_replica_set[count.index].id
   policy_id = local.database_backup_policy_id
 }

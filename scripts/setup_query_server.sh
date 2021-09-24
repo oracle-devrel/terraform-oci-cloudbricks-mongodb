@@ -3,7 +3,13 @@
 
 #!/bin/bash
 
-sudo tee /etc/mongos.conf > /dev/null << 'EOF'
+config_ips=$1
+query_server_ip=$2
+
+config_ips_with_ports=$(echo "${config_ips}" | sed 's/,/:27019,/g' | sed 's/]/:27019/g' | sed 's/^.//')
+
+
+sudo tee /etc/mongos.conf > /dev/null << EOF
 # mongos.conf
 
 systemLog:
@@ -16,11 +22,11 @@ net:
   bindIp: ${query_server_ip}
 
 sharding:
-  configDB: configReplSet/${primary_config_server_ip}:27019,${secondary_config_server_ip}:27019
+  configDB: configreplset/${config_ips_with_ports}
 EOF
 
 
-sudo tee /lib/systemd/system/mongos.service > /dev/null << 'EOF'
+sudo tee /lib/systemd/system/mongos.service > /dev/null << EOF
 [Unit]
 Description=Mongo Cluster Router
 After=network.target

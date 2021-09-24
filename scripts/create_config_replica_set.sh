@@ -3,6 +3,24 @@
 
 #!/bin/bash
 
-mongo --eval 'rs.initiate( { _id: "configReplSet", configsvr: true, members: [ { _id: 0, host: "${primary_config_server_ip}:27019" }, { _id: 1, host: "${secondary_config_server_ip}:27019" } ] } )' ${primary_config_server_ip}:27019
+config_ips=$1
+config_count=$2
 
-mongo --eval 'rs.status()' ${primary_config_server_ip}:27019
+config_count=$((config_count-1))
+
+IFS="," read -a config_ips_arr <<< "$(echo "$config_ips" | tr -d '[]')"
+
+primary_config_ip=${config_ips_arr[0]}
+
+members=()
+
+count=0
+while [ $count -le ${config_count} ]
+do
+  members+="{ _id: $count, host: \"${config_ips_arr[count]}:27019\" },"
+  count=$(($count + 1))
+done
+
+members=$(echo ${members} | sed 's/.$//g')
+
+mongo --eval 'rs.initiate( { _id: "configreplset", configsvr: true, members: [ '"${members}"' ] } )' "${primary_config_ip}":27019

@@ -26,7 +26,7 @@ net:
   bindIp: ${config_server_ip}
 
 replication:
-  replSetName: configReplSet
+  replSetName: configreplset
 
 sharding:
   clusterRole: "configsvr"

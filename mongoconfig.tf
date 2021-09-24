@@ -13,56 +13,19 @@ data "template_file" "install_mongo_binaries_sh" {
   }
 }
 
-data "template_file" "primary_setup_config_server_sh" {
-  depends_on = [oci_core_instance.config_primary]
-  template = file("scripts/setup_config_server.sh")
+data "template_file" "setup_config_server_sh" {
+  count      = var.config_server_count
+  depends_on = [oci_core_instance.config_server]
+  template   = file("scripts/setup_config_server.sh")
   vars = {
-    config_server_ip = oci_core_instance.config_primary.private_ip
-  }
-}
-
-data "template_file" "secondary_setup_config_server_sh" {
-  depends_on = [oci_core_instance.config_secondary]
-  template = file("scripts/setup_config_server.sh")
-
-  vars = {
-    config_server_ip = oci_core_instance.config_secondary.private_ip
-  }
-}
-
-data "template_file" "create_config_replica_set_sh" {
-  depends_on = [
-    oci_core_instance.config_primary, 
-    oci_core_instance.config_secondary
-  ]
-  template = file("scripts/create_config_replica_set.sh")
-
-  vars = {
-    primary_config_server_ip   = oci_core_instance.config_primary.private_ip
-    secondary_config_server_ip = oci_core_instance.config_secondary.private_ip
-  }
-}
-
-data "template_file" "setup_query_server_sh" {
-  count = var.query_server_count
-  depends_on = [
-    oci_core_instance.config_primary, 
-    oci_core_instance.config_secondary,
-    oci_core_instance.query_server
-  ]
-  template = file("scripts/setup_query_server.sh")
-
-  vars = {
-    primary_config_server_ip   = oci_core_instance.config_primary.private_ip
-    secondary_config_server_ip = oci_core_instance.config_secondary.private_ip
-    query_server_ip            = oci_core_instance.query_server[count.index].private_ip
+    config_server_ip = oci_core_instance.config_server[count.index].private_ip
   }
 }
 
 data "template_file" "setup_shard_replica_set_sh" {
-  count = var.shard_replica_set_count
+  count      = var.shard_replica_set_count
   depends_on = [oci_core_instance.shard_replica_set]
-  template = file("scripts/setup_shard.sh")
+  template   = file("scripts/setup_shard.sh")
 
   vars = {
     shard_ip = oci_core_instance.shard_replica_set[count.index].private_ip
@@ -70,31 +33,33 @@ data "template_file" "setup_shard_replica_set_sh" {
 }
 
 data "template_file" "attach_shards_replica_set_sh" {
-  count = var.query_server_count
+  count      = var.query_server_count
   depends_on = [oci_core_instance.shard_replica_set]
-  template = templatefile("scripts/attach_shards.sh",
-  {
-    shard_ips              = jsonencode(oci_core_instance.shard_replica_set.*.private_ip)
-    query_server_ip        = oci_core_instance.query_server[count.index].private_ip
-  })
+  template   = file("scripts/attach_shards.sh")
+
+  vars = {
+    shard_ips       = jsonencode(oci_core_instance.shard_replica_set.*.private_ip)
+    query_server_ip = oci_core_instance.query_server[count.index].private_ip
+  }
 }
 
 
-resource "null_resource" "mongodb_config_primary_install_binaries" {
-  depends_on = [oci_core_instance.config_primary,
-    null_resource.provisioning_disk_config_primary,
-    null_resource.partition_disk_config_primary,
-    null_resource.pvcreate_exec_config_primary,
-    null_resource.vgcreate_exec_config_primary,
-    null_resource.format_disk_exec_config_primary,
-    null_resource.mount_disk_exec_config_primary
+resource "null_resource" "mongodb_config_server_install_binaries" {
+  count = var.config_server_count
+  depends_on = [oci_core_instance.config_server,
+    null_resource.provisioning_disk_config_server,
+    null_resource.partition_disk_config_server,
+    null_resource.pvcreate_exec_config_server,
+    null_resource.vgcreate_exec_config_server,
+    null_resource.format_disk_exec_config_server,
+    null_resource.mount_disk_exec_config_server
   ]
 
   provisioner "remote-exec" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
+      host        = oci_core_instance.config_server[count.index].private_ip
       private_key = file(var.ssh_private_key)
     }
 
@@ -107,7 +72,7 @@ resource "null_resource" "mongodb_config_primary_install_binaries" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
+      host        = oci_core_instance.config_server[count.index].private_ip
       private_key = file(var.ssh_private_key)
     }
 
@@ -119,7 +84,7 @@ resource "null_resource" "mongodb_config_primary_install_binaries" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
+      host        = oci_core_instance.config_server[count.index].private_ip
       private_key = file(var.ssh_private_key)
     }
 
@@ -131,110 +96,15 @@ resource "null_resource" "mongodb_config_primary_install_binaries" {
 }
 
 
-resource "null_resource" "mongodb_config_primary_setup" {
-  depends_on = [null_resource.mongodb_config_primary_install_binaries]
+resource "null_resource" "mongodb_config_server_setup" {
+  count      = var.config_server_count
+  depends_on = [null_resource.mongodb_config_server_install_binaries]
 
   provisioner "remote-exec" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
-      private_key = file(var.ssh_private_key)
-    }
-    
-    inline = [
-      "sudo rm -rf ~/setup_config_server.sh"
-    ]
-  }
-
-  provisioner "file" {
-    connection {
-      type        = "ssh"
-      user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
-      private_key = file(var.ssh_private_key)
-    }
-
-    content     = data.template_file.primary_setup_config_server_sh.rendered
-    destination = "~/setup_config_server.sh"
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
-      private_key = file(var.ssh_private_key)
-    }
-
-    inline = [
-      "chmod +x ~/setup_config_server.sh",
-      "sudo ~/setup_config_server.sh"
-    ]
-  }
-}
-
-
-
-resource "null_resource" "mongodb_config_secondary_install_binaries" {
-  depends_on = [oci_core_instance.config_secondary,
-    null_resource.provisioning_disk_config_secondary,
-    null_resource.partition_disk_config_secondary,
-    null_resource.pvcreate_exec_config_secondary,
-    null_resource.vgcreate_exec_config_secondary,
-    null_resource.format_disk_exec_config_secondary,
-    null_resource.mount_disk_exec_config_secondary
-  ]
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "opc"
-      host        = oci_core_instance.config_secondary.private_ip
-      private_key = file(var.ssh_private_key)
-    }
-
-    inline = [
-      "sudo rm -rf ~/install_mongo_binaries.sh"
-    ]
-  }
-
-  provisioner "file" {
-    connection {
-      type        = "ssh"
-      user        = "opc"
-      host        = oci_core_instance.config_secondary.private_ip
-      private_key = file(var.ssh_private_key)
-    }
-
-    content     = data.template_file.install_mongo_binaries_sh.rendered
-    destination = "~/install_mongo_binaries.sh"
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "opc"
-      host        = oci_core_instance.config_secondary.private_ip
-      private_key = file(var.ssh_private_key)
-    }
-
-    inline = [
-      "chmod +x ~/install_mongo_binaries.sh",
-      "sudo ~/install_mongo_binaries.sh"
-    ]
-  }
-}
-
-
-resource "null_resource" "mongodb_config_seconday_setup" {
-  depends_on = [null_resource.mongodb_config_secondary_install_binaries]
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "opc"
-      host        = oci_core_instance.config_secondary.private_ip
+      host        = oci_core_instance.config_server[count.index].private_ip
       private_key = file(var.ssh_private_key)
     }
 
@@ -247,11 +117,11 @@ resource "null_resource" "mongodb_config_seconday_setup" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_secondary.private_ip
+      host        = oci_core_instance.config_server[count.index].private_ip
       private_key = file(var.ssh_private_key)
     }
 
-    content     = data.template_file.secondary_setup_config_server_sh.rendered
+    content     = data.template_file.setup_config_server_sh[count.index].rendered
     destination = "~/setup_config_server.sh"
   }
 
@@ -259,7 +129,7 @@ resource "null_resource" "mongodb_config_seconday_setup" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_secondary.private_ip
+      host        = oci_core_instance.config_server[count.index].private_ip
       private_key = file(var.ssh_private_key)
     }
 
@@ -273,15 +143,15 @@ resource "null_resource" "mongodb_config_seconday_setup" {
 
 resource "null_resource" "mongodb_config_create_replica_set" {
   depends_on = [
-    null_resource.mongodb_config_primary_setup,
-    null_resource.mongodb_config_seconday_setup
+    null_resource.mongodb_config_server_setup,
+    # null_resource.mongodb_config_seconday_setup
   ]
 
   provisioner "remote-exec" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
+      host        = oci_core_instance.config_server[0].private_ip
       private_key = file(var.ssh_private_key)
     }
 
@@ -294,11 +164,11 @@ resource "null_resource" "mongodb_config_create_replica_set" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
+      host        = oci_core_instance.config_server[0].private_ip
       private_key = file(var.ssh_private_key)
     }
 
-    content     = data.template_file.create_config_replica_set_sh.rendered
+    source      = "scripts/create_config_replica_set.sh"
     destination = "~/create_config_replica_set.sh"
   }
 
@@ -306,14 +176,14 @@ resource "null_resource" "mongodb_config_create_replica_set" {
     connection {
       type        = "ssh"
       user        = "opc"
-      host        = oci_core_instance.config_primary.private_ip
+      host        = oci_core_instance.config_server[0].private_ip
       private_key = file(var.ssh_private_key)
 
     }
 
     inline = [
       "chmod +x ~/create_config_replica_set.sh",
-      "sudo ~/create_config_replica_set.sh"
+      "sudo ~/create_config_replica_set.sh ${jsonencode(oci_core_instance.config_server.*.private_ip)} ${var.config_server_count}"
     ]
   }
 }
@@ -401,7 +271,7 @@ resource "null_resource" "mongodb_query_setup" {
       private_key = file(var.ssh_private_key)
     }
 
-    content     = data.template_file.setup_query_server_sh[count.index].rendered
+    source      = "scripts/setup_query_server.sh"
     destination = "~/setup_query_server.sh"
   }
 
@@ -415,7 +285,7 @@ resource "null_resource" "mongodb_query_setup" {
 
     inline = [
       "chmod +x ~/setup_query_server.sh",
-      "sudo ~/setup_query_server.sh"
+      "sudo ~/setup_query_server.sh ${jsonencode(oci_core_instance.config_server.*.private_ip)} ${oci_core_instance.query_server[count.index].private_ip}"
     ]
   }
 }
@@ -548,7 +418,7 @@ resource "null_resource" "mongodb_shard_replica_set_create_replica_set" {
       private_key = file(var.ssh_private_key)
     }
 
-    source = "scripts/create_shard_replica_set.sh"
+    source      = "scripts/create_shard_replica_set.sh"
     destination = "~/create_shard_replica_set.sh"
   }
 

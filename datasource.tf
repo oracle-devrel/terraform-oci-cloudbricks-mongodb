@@ -96,7 +96,7 @@ locals {
 
   # Backup Policy Accessors
   instance_backup_policy_id = data.oci_core_volume_backup_policies.INSTANCEBACKUPPOLICY.volume_backup_policies[0].id
-  
+
   config_backup_policy_id = data.oci_core_volume_backup_policies.CONFIGBACKUPPOLICY.volume_backup_policies[0].id
 
   query_backup_policy_id = data.oci_core_volume_backup_policies.QUERYBACKUPPOLICY.volume_backup_policies[0].id
@@ -112,5 +112,4 @@ locals {
   pvcreate = "sudo /sbin/pvcreate"
   vgcreate = "sudo /sbin/vgcreate"
   mkfs_xfs = "sudo /sbin/mkfs.xfs"
-
 }
