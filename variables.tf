@@ -29,10 +29,6 @@ variable "private_key_path" {
 
 /********** Brick Variables **********/
 
-variable "base_compute_image_ocid" {
-  description = "Defines the OCID for the OS image to be used on artifact creation. Extract OCID from: https://docs.cloud.oracle.com/iaas/images/ or designated custom image OCID created by packer"
-}
-
 variable "config_server_name" {
   description = "The name given to the config server instances"
 }

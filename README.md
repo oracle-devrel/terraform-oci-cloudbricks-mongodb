@@ -5,6 +5,8 @@
 ## Introduction
 The following brick contains the logic to provision a MonoDB database cluster in a highly available architecture. This includes 3-7 Config Servers, 3-7 Shards and any number of query servers.
 
+This brick is only supported on Oracle Linux for the time being.
+
 ## Reference Architecture
 The following is the reference architecture associated to this brick
 
@@ -34,8 +36,6 @@ linux_compute_instance_compartment_name = "MY_ARTIFACT_COMPARTMENT"
 linux_compute_network_compartment_name  = "MY_NETWORK_COMPARTMENT"
 private_network_subnet_name             = "MY_PRIVATE_SUBNET"
 vcn_display_name                        = "MY_VCN"
-
-base_compute_image_ocid = "ocid1.image.oc1.uk-london-1.aaaaaaaabcedfghijklmonoprstuvwxyz" 
 
 config_server_name    = "MY_CONFIG_SERVER_NAME"
 config_server_shape   = "VM.Standard.E4.Flex"
@@ -91,8 +91,6 @@ linux_compute_instance_compartment_name = "MY_ARTIFACT_COMPARTMENT"
 linux_compute_network_compartment_name  = "MY_NETWORK_COMPARTMENT"
 private_network_subnet_name             = "MY_PRIVATE_SUBNET"
 vcn_display_name                        = "MY_VCN"
-
-base_compute_image_ocid = "ocid1.image.oc1.uk-london-1.aaaaaaaabcedfghijklmonoprstuvwxyz" 
 
 config_server_name          = "MY_CONFIG_SERVER_NAME"
 config_server_shape         = "VM.Standard.E4.Flex"
@@ -184,6 +182,7 @@ provider "oci" {
   disable_auto_retries = "true"
 }
 ```
+
 ## Variable documentation
 
 ## Requirements
@@ -251,6 +250,7 @@ No modules.
 | [oci_core_volume_backup_policy_assignment.backup_policy_assignment_config_server](https://registry.terraform.io/providers/hashicorp/oci/latest/docs/resources/core_volume_backup_policy_assignment) | resource |
 | [oci_core_volume_backup_policy_assignment.backup_policy_assignment_query_server](https://registry.terraform.io/providers/hashicorp/oci/latest/docs/resources/core_volume_backup_policy_assignment) | resource |
 | [oci_core_volume_backup_policy_assignment.backup_policy_assignment_shard_replica_set](https://registry.terraform.io/providers/hashicorp/oci/latest/docs/resources/core_volume_backup_policy_assignment) | resource |
+| [oci_core_images.ORACLELINUX](https://registry.terraform.io/providers/hashicorp/oci/latest/docs/data-sources/core_images) | data source |
 | [oci_core_network_security_groups.NSG](https://registry.terraform.io/providers/hashicorp/oci/latest/docs/data-sources/core_network_security_groups) | data source |
 | [oci_core_subnets.PRIVATESUBNET](https://registry.terraform.io/providers/hashicorp/oci/latest/docs/data-sources/core_subnets) | data source |
 | [oci_core_vcns.VCN](https://registry.terraform.io/providers/hashicorp/oci/latest/docs/data-sources/core_vcns) | data source |
@@ -269,7 +269,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_base_compute_image_ocid"></a> [base\_compute\_image\_ocid](#input\_base\_compute\_image\_ocid) | Defines the OCID for the OS image to be used on artifact creation. Extract OCID from: https://docs.cloud.oracle.com/iaas/images/ or designated custom image OCID created by packer | `any` | n/a | yes |
 | <a name="input_compute_nsg_name"></a> [compute\_nsg\_name](#input\_compute\_nsg\_name) | Name of the NSG associated to the computes | `string` | `""` | no |
 | <a name="input_config_backup_policy_level"></a> [config\_backup\_policy\_level](#input\_config\_backup\_policy\_level) | The backup policy of config server ISCSI disks | `any` | n/a | yes |
 | <a name="input_config_disk_size_in_gb"></a> [config\_disk\_size\_in\_gb](#input\_config\_disk\_size\_in\_gb) | The size of the attached disk to the config server instances, stores logging data | `any` | n/a | yes |
