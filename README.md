@@ -38,19 +38,19 @@ private_network_subnet_name             = "MY_PRIVATE_SUBNET"
 vcn_display_name                        = "MY_VCN"
 
 config_server_name    = "MY_CONFIG_SERVER_NAME"
-config_server_shape   = "VM.Standard.E4.Flex"
+config_server_shape   = "VM.Standard2.1"
 config_server_count   = 3
 config_server_ad_list = ["aBCD:RE-REGION-1-AD-1", "aBCD:RE-REGION-1-AD-2","aBCD:RE-REGION-1-AD-3" ]
 config_server_fd_list = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-2", "FAULT-DOMAIN-3"]
 
 query_server_name    = "MY_QUERY_SERVER"
-query_server_shape   = "VM.Standard.E4.Flex"
+query_server_shape   = "VM.Standard2.1"
 query_server_count   = 2
 query_server_ad_list = ["aBCD:RE-REGION-1-AD-1", "aBCD:RE-REGION-1-AD-2","aBCD:RE-REGION-1-AD-3" ]
 query_server_fd_list = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-2", "FAULT-DOMAIN-3"]
 
 shard_replica_set_name    = "MY_SHARD_SERVER_NAME"
-shard_replica_set_shape   = "VM.Standard.E4.Flex"
+shard_replica_set_shape   = "VM.Standard2.1"
 shard_replica_set_count   = 3
 shard_replica_set_ad_list = ["aBCD:RE-REGION-1-AD-1", "aBCD:RE-REGION-1-AD-2","aBCD:RE-REGION-1-AD-3" ]
 shard_replica_set_fd_list = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-2", "FAULT-DOMAIN-3"]
