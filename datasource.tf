@@ -82,6 +82,15 @@ data "oci_core_volume_backup_policies" "DATABASEBACKUPPOLICY" {
   }
 }
 
+data "oci_core_images" "ORACLELINUX" {
+  compartment_id = local.compartment_id
+
+  filter {
+    name   = "operating_system"
+    values = ["Oracle Autonomous Linux"]
+  }
+}
+
 locals {
 
   # Subnet OCID local accessors
@@ -106,9 +115,12 @@ locals {
   # NSG OCID Local Accessor
   nsg_id = length(data.oci_core_network_security_groups.NSG.network_security_groups) > 0 ? lookup(data.oci_core_network_security_groups.NSG.network_security_groups[0], "id") : ""
 
+  base_compute_image_ocid = data.oci_core_images.ORACLELINUX.images[0].id
+
   # Command aliases for format and mounting iscsi disks
   iscsiadm = "sudo iscsiadm"
   fdisk    = "(echo n; echo p; echo '1'; echo ''; echo ''; echo 't';echo '8e'; echo w) | sudo /sbin/fdisk "
+  parted = "sudo parted -a optimal"
   pvcreate = "sudo /sbin/pvcreate"
   vgcreate = "sudo /sbin/vgcreate"
   mkfs_xfs = "sudo /sbin/mkfs.xfs"

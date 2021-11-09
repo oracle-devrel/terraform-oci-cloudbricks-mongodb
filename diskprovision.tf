@@ -46,7 +46,7 @@ resource "null_resource" "partition_disk_config_server" {
     inline = [
       "set +x",
       "export DEVICE_ID=/dev/disk/by-path/ip-${oci_core_volume_attachment.ISCSIDiskAttachment_config_server[count.index].ipv4}:${oci_core_volume_attachment.ISCSIDiskAttachment_config_server[count.index].port}-iscsi-${oci_core_volume_attachment.ISCSIDiskAttachment_config_server[count.index].iqn}-lun-1",
-      "${local.fdisk} $${DEVICE_ID}",
+      "if [ ${var.config_disk_size_in_gb} > 2000 ]; then ${local.parted} $${DEVICE_ID} mklabel gpt mkpart P1 xfs 0% 100%; else ${local.fdisk} $${DEVICE_ID}; fi",
     ]
   }
 }
@@ -195,7 +195,7 @@ resource "null_resource" "partition_disk_query_server" {
     inline = [
       "set +x",
       "export DEVICE_ID=/dev/disk/by-path/ip-${oci_core_volume_attachment.ISCSIDiskAttachment_query_server[count.index].ipv4}:${oci_core_volume_attachment.ISCSIDiskAttachment_query_server[count.index].port}-iscsi-${oci_core_volume_attachment.ISCSIDiskAttachment_query_server[count.index].iqn}-lun-1",
-      "${local.fdisk} $${DEVICE_ID}",
+      "if [ ${var.query_disk_size_in_gb} > 2000 ]; then ${local.parted} $${DEVICE_ID} mklabel gpt mkpart P1 xfs 0% 100%; else ${local.fdisk} $${DEVICE_ID}; fi",
     ]
   }
 }
@@ -343,7 +343,7 @@ resource "null_resource" "partition_disk_shard_replica_set" {
     inline = [
       "set +x",
       "export DEVICE_ID=/dev/disk/by-path/ip-${oci_core_volume_attachment.ISCSIDiskAttachment_shard_replica_set[count.index].ipv4}:${oci_core_volume_attachment.ISCSIDiskAttachment_shard_replica_set[count.index].port}-iscsi-${oci_core_volume_attachment.ISCSIDiskAttachment_shard_replica_set[count.index].iqn}-lun-1",
-      "${local.fdisk} $${DEVICE_ID}",
+      "if [ ${var.database_size_in_gb} > 2000 ]; then ${local.parted} $${DEVICE_ID} mklabel gpt mkpart P1 xfs 0% 100%; else ${local.fdisk} $${DEVICE_ID}; fi",
     ]
   }
 }
