@@ -6,7 +6,7 @@
 
 
 data "template_file" "install_mongo_binaries_sh" {
-  template = file("scripts/install_mongo_binaries.sh")
+  template = file("${path.module}/scripts/install_mongo_binaries.sh")
 
   vars = {
     mongodb_version = var.mongodb_version
@@ -16,7 +16,7 @@ data "template_file" "install_mongo_binaries_sh" {
 data "template_file" "setup_config_server_sh" {
   count      = var.config_server_count
   depends_on = [oci_core_instance.config_server]
-  template   = file("scripts/setup_config_server.sh")
+  template   = file("${path.module}/scripts/setup_config_server.sh")
   vars = {
     config_server_ip = oci_core_instance.config_server[count.index].private_ip
   }
@@ -25,7 +25,7 @@ data "template_file" "setup_config_server_sh" {
 data "template_file" "setup_shard_replica_set_sh" {
   count      = var.shard_replica_set_count
   depends_on = [oci_core_instance.shard_replica_set]
-  template   = file("scripts/setup_shard.sh")
+  template   = file("${path.module}/scripts/setup_shard.sh")
 
   vars = {
     shard_ip = oci_core_instance.shard_replica_set[count.index].private_ip
@@ -35,7 +35,7 @@ data "template_file" "setup_shard_replica_set_sh" {
 data "template_file" "attach_shards_replica_set_sh" {
   count      = var.query_server_count
   depends_on = [oci_core_instance.shard_replica_set]
-  template   = file("scripts/attach_shards.sh")
+  template   = file("${path.module}/scripts/attach_shards.sh")
 
   vars = {
     shard_ips       = jsonencode(oci_core_instance.shard_replica_set.*.private_ip)
@@ -168,7 +168,7 @@ resource "null_resource" "mongodb_config_create_replica_set" {
       private_key = file(var.ssh_private_key)
     }
 
-    source      = "scripts/create_config_replica_set.sh"
+    source      = "${path.module}/scripts/create_config_replica_set.sh"
     destination = "~/create_config_replica_set.sh"
   }
 
@@ -271,7 +271,7 @@ resource "null_resource" "mongodb_query_setup" {
       private_key = file(var.ssh_private_key)
     }
 
-    source      = "scripts/setup_query_server.sh"
+    source      = "${path.module}/scripts/setup_query_server.sh"
     destination = "~/setup_query_server.sh"
   }
 
@@ -418,7 +418,7 @@ resource "null_resource" "mongodb_shard_replica_set_create_replica_set" {
       private_key = file(var.ssh_private_key)
     }
 
-    source      = "scripts/create_shard_replica_set.sh"
+    source      = "${path.module}/scripts/create_shard_replica_set.sh"
     destination = "~/create_shard_replica_set.sh"
   }
 
