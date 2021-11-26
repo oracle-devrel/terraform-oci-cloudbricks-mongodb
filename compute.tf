@@ -22,6 +22,13 @@ resource "oci_core_instance" "config_server" {
     }
   }
 
+  agent_config {
+    plugins_config {
+      desired_state = "ENABLED"
+      name = "Bastion"
+    }
+  }
+
   fault_domain = var.config_server_fd_list[floor(count.index / length(var.config_server_fd_list))]
 
   create_vnic_details {
@@ -65,6 +72,13 @@ resource "oci_core_instance" "query_server" {
     }
   }
 
+  agent_config {
+    plugins_config {
+      desired_state = "ENABLED"
+      name = "Bastion"
+    }
+  }
+
   fault_domain = var.query_server_fd_list[floor(count.index / length(var.query_server_fd_list))]
 
   create_vnic_details {
@@ -105,6 +119,13 @@ resource "oci_core_instance" "shard_replica_set" {
     content {
       ocpus         = var.shard_replica_set_ocpus
       memory_in_gbs = var.shard_replica_set_memory_in_gb
+    }
+  }
+
+  agent_config {
+    plugins_config {
+      desired_state = "ENABLED"
+      name = "Bastion"
     }
   }
 
