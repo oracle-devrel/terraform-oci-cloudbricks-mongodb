@@ -140,7 +140,7 @@ mongodb_version = "5.0"
 ### Variable Specific Conisderions
 - Compute ssh keys to later log into instances. Paths to the keys should be provided in variables `ssh_public_key` and `ssh_private_key`.
 - Variable `compute_nsg_name` is an optional network security group that can be attached.
-- Variable `mongodb_version` may be set to any of the supported version of MongoDB at the time of creating this brick `(4.0, 4.2, 4.4 or 5.0)`.
+- Variable `mongodb_version` may be set to any of the supported version of MongoDB at the time of creating this brick `(4.2, 4.4 or 5.0)`.
 - Variables `config_server_count` and `shard_replica_set_count` are used to choose how many config and shard servers are provisioned respectively. These can be anywhere between `1-7`, though it is recommended to use at least `3` each for high availability setups to function correctly.
 - Variable `query_server_count` is used to choose how many query servers are provisioned. `2` is a reasonable amount to provision.
 - Variable `instance_backup_policy_level` specifies the name of the backup policy used on the instance boot volumes.

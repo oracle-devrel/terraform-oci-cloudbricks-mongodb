@@ -64,7 +64,7 @@ resource "null_resource" "mongodb_config_server_install_binaries" {
     }
 
     inline = [
-      "sudo rm -rf ~/install_mongo_binaries.sh"
+      "sudo rm -rf /tmp/install_mongo_binaries.sh"
     ]
   }
 
@@ -77,7 +77,7 @@ resource "null_resource" "mongodb_config_server_install_binaries" {
     }
 
     content     = data.template_file.install_mongo_binaries_sh.rendered
-    destination = "~/install_mongo_binaries.sh"
+    destination = "/tmp/install_mongo_binaries.sh"
   }
 
   provisioner "remote-exec" {
@@ -89,8 +89,8 @@ resource "null_resource" "mongodb_config_server_install_binaries" {
     }
 
     inline = [
-      "chmod +x ~/install_mongo_binaries.sh",
-      "sudo ~/install_mongo_binaries.sh"
+      "chmod +x /tmp/install_mongo_binaries.sh",
+      "sudo /tmp/install_mongo_binaries.sh"
     ]
   }
 }
@@ -109,7 +109,7 @@ resource "null_resource" "mongodb_config_server_setup" {
     }
 
     inline = [
-      "sudo rm -rf ~/setup_config_server.sh"
+      "sudo rm -rf /tmp/setup_config_server.sh"
     ]
   }
 
@@ -122,7 +122,7 @@ resource "null_resource" "mongodb_config_server_setup" {
     }
 
     content     = data.template_file.setup_config_server_sh[count.index].rendered
-    destination = "~/setup_config_server.sh"
+    destination = "/tmp/setup_config_server.sh"
   }
 
   provisioner "remote-exec" {
@@ -134,8 +134,8 @@ resource "null_resource" "mongodb_config_server_setup" {
     }
 
     inline = [
-      "chmod +x ~/setup_config_server.sh",
-      "sudo ~/setup_config_server.sh"
+      "chmod +x /tmp/setup_config_server.sh",
+      "sudo /tmp/setup_config_server.sh"
     ]
   }
 }
@@ -156,7 +156,7 @@ resource "null_resource" "mongodb_config_create_replica_set" {
     }
 
     inline = [
-      "sudo rm -rf ~/create_config_replica_set.sh"
+      "sudo rm -rf /tmp/create_config_replica_set.sh"
     ]
   }
 
@@ -169,7 +169,7 @@ resource "null_resource" "mongodb_config_create_replica_set" {
     }
 
     source      = "${path.module}/scripts/create_config_replica_set.sh"
-    destination = "~/create_config_replica_set.sh"
+    destination = "/tmp/create_config_replica_set.sh"
   }
 
   provisioner "remote-exec" {
@@ -182,8 +182,8 @@ resource "null_resource" "mongodb_config_create_replica_set" {
     }
 
     inline = [
-      "chmod +x ~/create_config_replica_set.sh",
-      "sudo ~/create_config_replica_set.sh ${jsonencode(oci_core_instance.config_server.*.private_ip)} ${var.config_server_count}"
+      "chmod +x /tmp/create_config_replica_set.sh",
+      "sudo /tmp/create_config_replica_set.sh ${jsonencode(oci_core_instance.config_server.*.private_ip)} ${var.config_server_count}"
     ]
   }
 }
@@ -211,7 +211,7 @@ resource "null_resource" "mongodb_query_server_install_binaries" {
     }
 
     inline = [
-      "sudo rm -rf ~/install_mongo_binaries.sh"
+      "sudo rm -rf /tmp/install_mongo_binaries.sh"
     ]
   }
 
@@ -224,7 +224,7 @@ resource "null_resource" "mongodb_query_server_install_binaries" {
     }
 
     content     = data.template_file.install_mongo_binaries_sh.rendered
-    destination = "~/install_mongo_binaries.sh"
+    destination = "/tmp/install_mongo_binaries.sh"
   }
 
   provisioner "remote-exec" {
@@ -236,8 +236,8 @@ resource "null_resource" "mongodb_query_server_install_binaries" {
     }
 
     inline = [
-      "chmod +x ~/install_mongo_binaries.sh",
-      "sudo ~/install_mongo_binaries.sh"
+      "chmod +x /tmp/install_mongo_binaries.sh",
+      "sudo /tmp/install_mongo_binaries.sh"
     ]
   }
 }
@@ -259,7 +259,7 @@ resource "null_resource" "mongodb_query_setup" {
     }
 
     inline = [
-      "sudo rm -rf ~/setup_query_server.sh"
+      "sudo rm -rf /tmp/setup_query_server.sh"
     ]
   }
 
@@ -272,7 +272,7 @@ resource "null_resource" "mongodb_query_setup" {
     }
 
     source      = "${path.module}/scripts/setup_query_server.sh"
-    destination = "~/setup_query_server.sh"
+    destination = "/tmp/setup_query_server.sh"
   }
 
   provisioner "remote-exec" {
@@ -284,8 +284,8 @@ resource "null_resource" "mongodb_query_setup" {
     }
 
     inline = [
-      "chmod +x ~/setup_query_server.sh",
-      "sudo ~/setup_query_server.sh ${jsonencode(oci_core_instance.config_server.*.private_ip)} ${oci_core_instance.query_server[count.index].private_ip}"
+      "chmod +x /tmp/setup_query_server.sh",
+      "sudo /tmp/setup_query_server.sh ${jsonencode(oci_core_instance.config_server.*.private_ip)} ${oci_core_instance.query_server[count.index].private_ip}"
     ]
   }
 }
@@ -313,7 +313,7 @@ resource "null_resource" "mongodb_shard_replica_set_install_binaries" {
     }
 
     inline = [
-      "sudo rm -rf ~/install_mongo_binaries.sh"
+      "sudo rm -rf /tmp/install_mongo_binaries.sh"
     ]
   }
 
@@ -326,7 +326,7 @@ resource "null_resource" "mongodb_shard_replica_set_install_binaries" {
     }
 
     content     = data.template_file.install_mongo_binaries_sh.rendered
-    destination = "~/install_mongo_binaries.sh"
+    destination = "/tmp/install_mongo_binaries.sh"
   }
 
   provisioner "remote-exec" {
@@ -338,8 +338,8 @@ resource "null_resource" "mongodb_shard_replica_set_install_binaries" {
     }
 
     inline = [
-      "chmod +x ~/install_mongo_binaries.sh",
-      "sudo ~/install_mongo_binaries.sh"
+      "chmod +x /tmp/install_mongo_binaries.sh",
+      "sudo /tmp/install_mongo_binaries.sh"
     ]
   }
 }
@@ -361,7 +361,7 @@ resource "null_resource" "mongodb_shard_replica_set_setup_shards" {
     }
 
     inline = [
-      "sudo rm -rf ~/setup_shard.sh"
+      "sudo rm -rf /tmp/setup_shard.sh"
     ]
   }
 
@@ -374,7 +374,7 @@ resource "null_resource" "mongodb_shard_replica_set_setup_shards" {
     }
 
     content     = data.template_file.setup_shard_replica_set_sh[count.index].rendered
-    destination = "~/setup_shard.sh"
+    destination = "/tmp/setup_shard.sh"
   }
 
   provisioner "remote-exec" {
@@ -386,8 +386,8 @@ resource "null_resource" "mongodb_shard_replica_set_setup_shards" {
     }
 
     inline = [
-      "chmod +x ~/setup_shard.sh",
-      "sudo ~/setup_shard.sh"
+      "chmod +x /tmp/setup_shard.sh",
+      "sudo /tmp/setup_shard.sh"
     ]
   }
 }
@@ -406,7 +406,7 @@ resource "null_resource" "mongodb_shard_replica_set_create_replica_set" {
     }
 
     inline = [
-      "sudo rm -rf ~/create_shard_replica_set.sh"
+      "sudo rm -rf /tmp/create_shard_replica_set.sh"
     ]
   }
 
@@ -419,7 +419,7 @@ resource "null_resource" "mongodb_shard_replica_set_create_replica_set" {
     }
 
     source      = "${path.module}/scripts/create_shard_replica_set.sh"
-    destination = "~/create_shard_replica_set.sh"
+    destination = "/tmp/create_shard_replica_set.sh"
   }
 
   provisioner "remote-exec" {
@@ -431,8 +431,8 @@ resource "null_resource" "mongodb_shard_replica_set_create_replica_set" {
     }
 
     inline = [
-      "chmod +x ~/create_shard_replica_set.sh",
-      "sudo ~/create_shard_replica_set.sh ${jsonencode(oci_core_instance.shard_replica_set.*.private_ip)} ${var.shard_replica_set_count}"
+      "chmod +x /tmp/create_shard_replica_set.sh",
+      "sudo /tmp/create_shard_replica_set.sh ${jsonencode(oci_core_instance.shard_replica_set.*.private_ip)} ${var.shard_replica_set_count}"
     ]
   }
 }
@@ -453,7 +453,7 @@ resource "null_resource" "mongodb_shard_replica_set_attach_shards" {
     }
 
     inline = [
-      "sudo rm -rf ~/attach_shards.sh"
+      "sudo rm -rf /tmp/attach_shards.sh"
     ]
   }
 
@@ -466,7 +466,7 @@ resource "null_resource" "mongodb_shard_replica_set_attach_shards" {
     }
 
     content     = data.template_file.attach_shards_replica_set_sh[count.index].rendered
-    destination = "~/attach_shards.sh"
+    destination = "/tmp/attach_shards.sh"
   }
 
   provisioner "remote-exec" {
@@ -478,8 +478,8 @@ resource "null_resource" "mongodb_shard_replica_set_attach_shards" {
     }
 
     inline = [
-      "chmod +x ~/attach_shards.sh",
-      "sudo ~/attach_shards.sh"
+      "chmod +x /tmp/attach_shards.sh",
+      "sudo /tmp/attach_shards.sh"
     ]
   }
 }

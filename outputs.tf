@@ -6,18 +6,15 @@
 
 output "mongodb_config_servers" {
   description = "MongoDB Config Server Instances"
-  sensitive   = true
   value = oci_core_instance.config_server[*]
 }
 
 output "mongodb_query_servers" {
   description = "MongoDB Query Server Instances"
-  sensitive   = true
   value = oci_core_instance.query_server[*]
 }
 
 output "mongodb_shard_servers" {
   description = "MongoDB Shard Server Instances"
-  sensitive   = true
   value = oci_core_instance.shard_replica_set[*]
 }
